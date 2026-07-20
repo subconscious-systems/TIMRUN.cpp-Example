@@ -9,7 +9,7 @@ workload from [`test-subconscious-hit.py`](test-subconscious-hit.py).
 - **Server:** bundled `bin/llama-server.exe`, `-c 32768`, `--jinja --chat-template-file qwen.jinja --reasoning off --no-mmproj`, `LLAMA_ARG_CHAT_TEMPLATE_KWARGS={"preserve_thinking": true}`
 - **Models:**
   - `qwen-2b` — `Qwen3.5-2B-Q4_K_M.gguf` (~1.2 GB)
-  - `tim-9b` — `tim-9b-1.25bit.gguf` (~3.0 GB, Subconscious's own model)
+  - `tim-9b` — `SubconsciousDev/tim-9b-1.3bit-gguf` (1.3-bit, ~3.0 GB, Subconscious's own model)
 
 > **⚡ Update 2026-07-20 — tim-9b re-measured with the new 1.3-bit CPU kernel**
 >
@@ -62,10 +62,9 @@ reuses `C` and drops `B` — the operation the logs call **surgery**.
 so the measurement is **prefill-dominated** (this is where the cache acts);
 `max_tokens=256` adds a realistic decode tail (replies finish naturally, so
 `<|im_end|>` is present and the suffix match is robust). tim-9b uses **a fresh
-cold server per rep** (2 reps) — this avoids the `/flush_cache` carryover that
-contaminated an earlier `max_tokens=128` pass. Streaming reads decode each SSE
-line as UTF-8 from raw bytes (a mid-stream multi-byte decode bug that had
-corrupted a non-ASCII `R1` is fixed).
+cold server per rep** (2 reps), so every turn-1 is genuinely cold. Streaming reads
+decode each SSE line as UTF-8 from raw bytes, so multi-byte characters in `R1`
+round-trip exactly (required for the suffix to match the cache).
 
 ### Metrics
 
@@ -229,18 +228,7 @@ feature is aimed squarely at long-context, multi-turn, and agent workloads.
 
 ---
 
-## 6. Note on an earlier contaminated pass
-
-An earlier version of this benchmark ran `max_tokens=128` with `/flush_cache`
-between reps in one long-lived server. Flush did **not** reliably clear the slot
-(context checkpoints survived it), so later reps ran warm and their "cached"
-figures were ordinary prefix carryover, not surgery. That pass has been
-**replaced** by the fresh-cold-server-per-rep methodology used here (`mt=8` and
-`mt=256`), which needs no flush and gives a genuinely cold turn-1 every rep.
-
----
-
-## 7. Full summary table (median of reps)
+## 6. Full summary table (median of reps)
 
 ```
 config                    mt | t1_ttft t1_tot t2_ttft t2_tot | ttft_spd tot_spd | t2_cached t2_prompt t2_new | dec_tps
@@ -259,7 +247,7 @@ tim-9b/cache-on   (new)  256 |   3.66   9.71   0.69   7.51 |   5.30x   1.29x |  
 
 ---
 
-## 8. Conclusions
+## 7. Conclusions
 
 1. The Subconscious Cache **fires reliably** on both models, reusing **76–83%** of
    the Turn 2 prompt on this toy workload.
@@ -278,9 +266,10 @@ tim-9b/cache-on   (new)  256 |   3.66   9.71   0.69   7.51 |   5.30x   1.29x |  
 ### Reproduce
 
 ```powershell
+$env:SSL_CERT_FILE = "$PWD\cacert.pem"
 $env:LLAMA_ARG_CHAT_TEMPLATE_KWARGS = '{"preserve_thinking": true}'
 $env:BRAINTREE_PP_CACHE_LOG_PATH = "$PWD\pp_cache.log"
-.\bin\llama-server.exe -m C:\Users\lhyth\Desktop\models\tim-9b-1.25bit.gguf `
+.\bin\llama-server.exe -hf SubconsciousDev/tim-9b-1.3bit-gguf `
   -c 32768 --host 127.0.0.1 --port 8080 --suffix-cache `
   --jinja --chat-template-file qwen.jinja --reasoning off --no-mmproj
 # then, in another shell:

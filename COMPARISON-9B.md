@@ -11,7 +11,7 @@ and without the Subconscious Cache.
 | Model | File | Quant | Size | Architecture / cache path |
 |---|---|---|---|---|
 | **qwen-9b** | `Qwen3.5-9B-Q4_K_M.gguf` | Q4_K_M (~4.5-bit) | 5.29 GB | hybrid attention + Mamba/SSM · MambaRadixCache |
-| **tim-9b** | `tim-9b-1.25bit.gguf` | 1.25-bit QAT | 3.04 GB | hybrid attention + Mamba/SSM · MambaRadixCache |
+| **tim-9b** | `SubconsciousDev/tim-9b-1.3bit-gguf` | 1.3-bit QAT | 3.04 GB | hybrid attention + Mamba/SSM · MambaRadixCache |
 
 > **Both models are hybrid Mamba+attention and use the same MambaRadixCache
 > surgery path.** Architecture is *not* a differentiator here.
@@ -79,7 +79,7 @@ genuinely-new tokens.
 Both models answered the Paris-vs-London task coherently and stayed on-topic
 across both turns, with no drift on the surgery path (the reused recurrent state
 did not corrupt the reply). Quality was roughly at parity for this short factual
-task; the 1.25-bit tim-9b showed no obvious degradation here. (This workload is a
+task; the 1.3-bit tim-9b showed no obvious degradation here. (This workload is a
 cache smoke-test, not a rigorous quality benchmark.)
 
 ---
@@ -132,26 +132,9 @@ qwen-9b/cache-off 256 |   4.02  10.97  |   3.00   7.21  | 0/244
 qwen-9b/cache-off 256 |   4.05  10.97  |   2.99   7.24  | 0/244
 ```
 
-### Harness-bug note (why an earlier draft of this file was wrong)
-
-A first pass reported that qwen-9b got **no** cache benefit and was rejected for
-surgery, and wrongly attributed it to a "pure attention" architecture. Both claims
-were wrong:
-
-- Qwen3.5-9B is a **hybrid Mamba+attention** model on the same MambaRadixCache
-  path as tim-9b — not pure attention.
-- The observed miss was a **bug in the benchmark client**: the streaming reader
-  used `requests.iter_lines(decode_unicode=True)`, which decodes per network chunk
-  and **mangles a multi-byte UTF-8 character split across chunks** — the `é` in
-  "café" in qwen-9b's reply `R1`. The corrupted `R1`, re-sent as history in turn
-  2, re-tokenized differently (`cache_decision ... suffix=66 middle=40`, then
-  `no checkpoint … full reset`), so the hit was rejected. tim-9b was unaffected
-  only because its reply happened to be pure ASCII.
-
-Fix: iterate raw bytes and decode each *complete* SSE line as UTF-8. After the fix
-(and shown above), qwen-9b surgers exactly like tim-9b. The `--suffix-cache`
-requirement that "the re-sent R1 must tokenize identically to the cached R1" is
-strict — one mishandled multi-byte character breaks it.
+Both models reuse ~200 tokens of the turn-2 prompt via surgery and prefill only
+the ~42 new tokens; the `--suffix-cache` match requires the re-sent `R1` to
+tokenize identically to the cached `R1`, which holds here for both models.
 
 See also [BENCHMARK.md](BENCHMARK.md) for the tim / qwen-2b runs and the
 long-context rationale.
