@@ -1,0 +1,108 @@
+0.00.450.048 I log_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.450.053 I device_info:
+0.00.450.058 I   - CPU     : Intel(R) Core(TM) i9-14900KF (32486 MiB, 10181 MiB free)
+0.00.450.085 I system_info: n_threads = 24 (n_threads_batch = 24) / 32 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.00.450.085 I srv  llama_server: n_parallel is set to auto, using n_parallel = 4 and kv_unified = true
+0.00.450.108 I srv          init: running without SSL
+0.00.450.113 I srv          init: using 31 threads for HTTP server
+0.00.450.160 I srv         start: binding port with default address family
+0.00.456.050 I srv  llama_server: loading model
+0.00.456.061 I srv    load_model: loading model 'C:\Users\lhyth\.cache\huggingface\hub\models--unsloth--Qwen3.5-2B-GGUF\snapshots\f6d5376be1edb4d416d56da11e5397a961aca8ae\Qwen3.5-2B-Q4_K_M.gguf'
+0.00.456.398 I common_init_result: fitting params to device memory ...
+0.00.456.402 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.824.128 I common_params_fit_impl: projected to use 1262 MiB of host memory vs. 32486 MiB of total host memory
+0.01.652.524 I common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.01.869.794 I srv    load_model: initializing slots, n_slots = 4
+0.01.955.220 I srv    load_model: speculative decoding will use checkpoints
+0.01.956.170 I common_speculative_init: no implementations specified for speculative decoding
+0.01.956.175 I slot   load_model: id  0 | task -1 | new slot, n_ctx = 32768
+0.01.956.177 I slot   load_model: id  1 | task -1 | new slot, n_ctx = 32768
+0.01.956.178 I slot   load_model: id  2 | task -1 | new slot, n_ctx = 32768
+0.01.956.178 I slot   load_model: id  3 | task -1 | new slot, n_ctx = 32768
+0.01.956.260 I srv    load_model: prompt cache is enabled, size limit: 8192 MiB
+0.01.956.263 I srv    load_model: use `--cache-ram 0` to disable the prompt cache
+0.01.956.354 I srv    load_model: for more info see https://github.com/ggml-org/llama.cpp/pull/16391
+0.01.956.360 I srv    load_model: context checkpoints enabled, max = 32, min spacing = 256
+0.01.956.483 I srv          init: idle slots will be saved to prompt cache and cleared upon starting a new task
+0.01.985.548 I init: chat template, example_format: '<|im_start|>system
+You are a helpful assistant<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+
+Hi there<|im_end|>
+<|im_start|>user
+How are you?<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+
+'
+0.02.008.306 I srv          init: init: chat template, thinking = 0
+0.02.008.325 I srv  llama_server: model loaded
+0.02.008.327 I srv  llama_server: server is listening on http://127.0.0.1:8080
+0.02.008.467 I srv  update_slots: all slots are idle
+0.29.360.754 I srv  oaicompat_ch: 6 messages, 1 subtask spans, st_buffer=0
+0.29.360.759 I srv  oaicompat_ch: pp_plan_summary: msgs=6 spans=1 buffer=0 prune_count=0
+0.29.360.763 I srv  oaicompat_ch: [1m[35mprogressive prefill: suffix-cache only (auto-prune off) — 6 messages, no server-side pruning, plan armed for surgery[0m
+0.29.361.685 I srv  params_from_: Chat format: peg-native
+0.29.362.118 I slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = -1
+0.29.362.120 I srv  get_availabl: updating prompt cache
+0.29.362.122 I srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000
+0.29.362.280 I srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 32768 tokens, 8589934592 est)
+0.29.362.285 I srv  get_availabl: prompt cache update took 0.16 ms
+0.29.362.315 I slot launch_slot_: id  3 | task 0 | processing task, is_child = 0
+0.29.362.317 I slot process_sing: id  0 | task -1 | saving idle slot to prompt cache
+0.29.362.318 I slot prompt_clear: id  0 | task -1 | clearing prompt with 0 tokens
+0.29.362.338 I slot process_sing: id  1 | task -1 | saving idle slot to prompt cache
+0.29.362.340 I slot prompt_clear: id  1 | task -1 | clearing prompt with 0 tokens
+0.29.362.351 I slot process_sing: id  2 | task -1 | saving idle slot to prompt cache
+0.29.362.352 I slot prompt_clear: id  2 | task -1 | clearing prompt with 0 tokens
+0.29.362.369 W slot update_slots: id  3 | task 0 | input_binding init: pp_done=1 input_n_tokens=0 task.n_tokens()=325 pp_effective=0
+0.29.362.369 W slot update_slots: id  3 | task 0 | pp comparison: prefix_len=0, cache_size=0, incoming_size=325
+0.29.362.371 I slot update_slots: id  3 | task 0 | progressive prefill cache hit: prefix=0, suffix=0, new=0 (cache=0, incoming=325)
+0.29.362.733 W slot update_slots: id  3 | task 0 | input_binding rebind: pp_done=1 input_n_tokens=325 task.n_tokens()=325 pp_effective=325 suffix_cache_only=1
+0.30.178.829 W slot update_slots: id  3 | task 0 | input_binding init: pp_done=1 input_n_tokens=325 task.n_tokens()=325 pp_effective=325
+0.30.187.000 I slot update_slots: id  3 | task 0 | created context checkpoint 1 of 32 (pos_min = 0, pos_max = 292, n_tokens = 293, n_tokens_full = 293, size = 19.266 MiB)
+0.30.286.321 W slot update_slots: id  3 | task 0 | input_binding init: pp_done=1 input_n_tokens=325 task.n_tokens()=325 pp_effective=325
+0.32.688.135 I slot print_timing: id  3 | task 0 | prompt eval time =     955.35 ms /   325 tokens (    2.94 ms per token,   340.19 tokens per second)
+0.32.688.147 I slot print_timing: id  3 | task 0 |        eval time =    2370.40 ms /    92 tokens (   25.77 ms per token,    38.81 tokens per second)
+0.32.688.148 I slot print_timing: id  3 | task 0 |       total time =    3325.75 ms /   417 tokens
+0.32.688.149 I slot print_timing: id  3 | task 0 |    graphs reused =         91
+0.32.688.226 I slot      release: id  3 | task 0 | stop processing: n_tokens = 416, truncated = 0
+0.32.688.251 I srv  update_slots: all slots are idle
+0.35.289.138 I srv  oaicompat_ch: 6 messages, 1 subtask spans, st_buffer=0
+0.35.289.144 I srv  oaicompat_ch: pp_plan_summary: msgs=6 spans=1 buffer=0 prune_count=0
+0.35.289.148 I srv  oaicompat_ch: [1m[35mprogressive prefill: suffix-cache only (auto-prune off) — 6 messages, no server-side pruning, plan armed for surgery[0m
+0.35.289.601 I srv  params_from_: Chat format: peg-native
+0.35.290.145 I slot get_availabl: id  3 | task -1 | selected slot by LCP similarity, sim_best = 0.377 (> 0.100 thold), f_keep = 0.236
+0.35.290.153 I srv  get_availabl: updating prompt cache
+0.35.290.198 I srv   prompt_save:  - saving prompt with length 416, total state size = 24.149 MiB
+0.35.301.116 I srv          load:  - looking for better prompt, base f_keep = 0.236, sim = 0.377
+0.35.301.124 I srv        update:  - cache state: 1 prompts, 43.415 MiB (limits: 8192.000 MiB, 32768 tokens, 78494 est)
+0.35.301.125 I srv        update:    - prompt 000001FC7E95DA60:     416 tokens, checkpoints:  1,    43.415 MiB
+0.35.301.126 I srv  get_availabl: prompt cache update took 10.97 ms
+0.35.301.294 I slot launch_slot_: id  3 | task 95 | processing task, is_child = 0
+0.35.301.296 I slot process_sing: id  0 | task -1 | saving idle slot to prompt cache
+0.35.301.297 I slot prompt_clear: id  0 | task -1 | clearing prompt with 0 tokens
+0.35.301.313 I slot process_sing: id  1 | task -1 | saving idle slot to prompt cache
+0.35.301.313 I slot prompt_clear: id  1 | task -1 | clearing prompt with 0 tokens
+0.35.301.325 I slot process_sing: id  2 | task -1 | saving idle slot to prompt cache
+0.35.301.326 I slot prompt_clear: id  2 | task -1 | clearing prompt with 0 tokens
+0.35.301.342 W slot update_slots: id  3 | task 95 | input_binding init: pp_done=1 input_n_tokens=416 task.n_tokens()=260 pp_effective=416
+0.35.301.343 W slot update_slots: id  3 | task 95 | pp comparison: prefix_len=98, cache_size=416, incoming_size=260
+0.35.301.351 I slot update_slots: id  3 | task 95 | cache_decision: prefix=98 suffix=120 gap=198 middle=0 new_tail=42 cache=416 incoming=260 auto_prune=0 suffix_cache=1 min_suffix_atoms=8
+0.35.301.443 I slot update_slots: id  3 | task 95 | progressive prefill cache surgery: prefix=98, middle=0, suffix=120, gap_pruned=198, new=42 (cache=416, incoming=260) | kv_prefix=98, kv_gap=198, kv_suffix=120, kv_middle=0
+0.35.301.708 W slot update_slots: id  3 | task 95 | input_binding rebind: pp_done=1 input_n_tokens=260 task.n_tokens()=260 pp_effective=260 suffix_cache_only=1
+0.35.338.167 W slot update_slots: id  3 | task 95 | input_binding init: pp_done=1 input_n_tokens=260 task.n_tokens()=260 pp_effective=260
+0.35.459.053 W slot update_slots: id  3 | task 95 | input_binding init: pp_done=1 input_n_tokens=260 task.n_tokens()=260 pp_effective=260
+0.37.716.489 I slot print_timing: id  3 | task 95 | prompt eval time =     191.07 ms /    42 tokens (    4.55 ms per token,   219.82 tokens per second)
+0.37.716.500 I slot print_timing: id  3 | task 95 |        eval time =    2224.06 ms /    85 tokens (   26.17 ms per token,    38.22 tokens per second)
+0.37.716.501 I slot print_timing: id  3 | task 95 |       total time =    2415.12 ms /   127 tokens
+0.37.716.501 I slot print_timing: id  3 | task 95 |    graphs reused =        174
+0.37.716.543 I slot      release: id  3 | task 95 | stop processing: n_tokens = 344, truncated = 0
+0.37.716.563 I srv  update_slots: all slots are idle

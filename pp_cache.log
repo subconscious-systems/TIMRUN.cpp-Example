@@ -1,0 +1,4 @@
+[2026-07-13 23:51:58] slot=3 task=0  cache_hit       incoming=  325  cache=    0 (prompt=    0, gen=    0)  |  prefix=    0  gap=    0  suffix=    0  new=    0
+  full=0, effective=325, pruned=0
+[2026-07-13 23:52:04] slot=3 task=95  surgery         incoming=  260  cache=  416 (prompt=  325, gen=   91)  |  prefix=   98  gap=  198  suffix=  120  new=   42
+  full=0, effective=260, pruned=0
